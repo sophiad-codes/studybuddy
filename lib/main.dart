@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:studdybuddy/home.dart';
-import 'package:studdybuddy/settings.dart';
+import 'package:studybuddy/home.dart';
+import 'package:studybuddy/settings.dart';
+import 'package:studybuddy/friends.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,61 +13,53 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Studdy Buddy',
+      title: 'Study Buddy',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFE97868)),
+        scaffoldBackgroundColor: const Color(0xFFDED3C5),
       ),
-      routes: {
-        '/': (context) => const MainScaffold(title: 'Study Buddy', child: Text('Home coming soon')),
-        '/friends': (context) => const MainScaffold(
-              title: 'Friends',
-              child: Center(child: Text('Friends coming soon')),
-            ),
-        '/settings': (context) =>
-            const MainScaffold(title: 'Settings', child: 
-            Text('Setting coming soon')),
-      },
+      home: const MainScaffold()
     );
   }
 }
 
-class MainScaffold extends StatelessWidget {
-  final String title;
-  final Widget child;
+class MainScaffold extends StatefulWidget {  
 
-  const MainScaffold({super.key, required this.title, required this.child});
-
-  static const List<String> _routes = ['/', '/friends', '/settings'];
+  const MainScaffold({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final current = ModalRoute.of(context)?.settings.name;
-    final index = _routes.indexOf(current ?? '');
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.of(context).pushReplacementNamed('/'),
-            icon: const Icon(Icons.house),
-          ),
-        ],
-      ),
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        showUnselectedLabels: false,
-        backgroundColor: const Color(0xFFE97868),
-        type: BottomNavigationBarType.fixed,
-        currentIndex: index < 0 ? 0 : index,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.group_outlined), label: 'Friends'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-        ],
-        onTap: (i) => Navigator.of(context).pushReplacementNamed(_routes[i]),
-      ),
-    );
-  }
+  State<StatefulWidget> createState() => _MainScaffoldState(); 
 }
+
+class _MainScaffoldState extends State<MainScaffold> {
+    int _currentIndex = 0;
+    
+    @override
+    Widget build(BuildContext context) {
+      final (title, page) = switch (_currentIndex) {
+        0 => ('Home', Home()),
+        1 => ('Friends', Friends()),
+        2 => ('Settings', Settings()),
+        // TODO: Handle this case.
+        _ => throw UnimplementedError(),
+      }; 
+
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(title),
+          backgroundColor: const Color(0xFFDED3C5),
+        ),
+        body: page,
+        bottomNavigationBar: NavigationBar(
+          backgroundColor: const Color(0xFFE97868),
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
+          destinations: const [
+            NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
+            NavigationDestination(icon: Icon(Icons.group_outlined), label: 'Friends'),
+            NavigationDestination(icon: Icon(Icons.settings_outlined), label: 'Settings'),
+          ],
+        ),
+      );
+    }
+  }

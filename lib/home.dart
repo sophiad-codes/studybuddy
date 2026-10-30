@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:studdybuddy/task.dart';
+import 'package:studybuddy/task.dart';
 
 class Home extends StatelessWidget {
+  const Home({super.key});
 
   @override
   Widget build (BuildContext context) {
-    throw UnimplementedError();
+    return const Center(child: Text('Home'));
   }
 
   /** TODO: Implement adding task Functionality 
@@ -18,7 +19,7 @@ class Home extends StatelessWidget {
   * 
   */
 
-  List<Task> tasks = [];
+  //List<Task> tasks = [];
 
 
   
