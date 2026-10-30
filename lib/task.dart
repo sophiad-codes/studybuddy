@@ -1,16 +1,20 @@
-import 'package:flutter/material.dart';
+class Task {
+  String? id;
+  String? taskTitle;
+  String? taskDescription;
+  bool isDone;
 
-class Task extends StatefulWidget {
+  Task({
+    required this.id,
+    required this.taskTitle,
+    this.isDone = false 
+  });
 
-  @override
-  Widget build (BuildContext context) {
-    throw UnimplementedError(); 
+  static List<Task> taskList () {
+    return [
+      Task(id: '1', taskTitle: 'task1', isDone: false),
+      Task(id: '2', taskTitle: 'task2', isDone: true),
+      Task(id: '3', taskTitle: 'task3', isDone: true),
+    ];
   }
-
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
-  }
-  
 }
