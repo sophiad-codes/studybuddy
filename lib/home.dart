@@ -34,7 +34,7 @@ class _HomeState extends State<Home> {
                             Container(
                               child: ElevatedButton(
                                 child: Icon(Icons.add_circle),
-                                onPressed: () {},
+                                onPressed: () => _addTask(),
                                 style: ElevatedButton.styleFrom(
                                   iconColor: const Color(0xFFE97868) 
                                 ),
@@ -77,14 +77,55 @@ class _HomeState extends State<Home> {
     });
   }
 
-  //List<Task> tasks = [];
-  void _addTask(String title, String description) {
-    setState(() {
-      taskList.add(Task(id: DateTime.now().millisecond.toString(), 
-      taskTitle: title
-      )
-      );
-    });
-    
-  }
+Future<void> _addTask() async {
+  final formKey = GlobalKey<FormState>();
+
+  await showDialog(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text('New Task'),
+      content: Form(
+        key: formKey,
+        child: TextFormField(
+          autofocus: true,
+          decoration: const InputDecoration(labelText: 'Task Title'),
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Please enter a title';
+            }
+            return null;
+          },
+          onSaved: (value) {
+            if (value != null) {
+              setState(() {
+                taskList.add(
+                  Task(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    taskTitle: value.trim(),
+                  ),
+                );
+              });
+            }
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            final state = formKey.currentState;
+            if (state != null && state.validate()) {
+              state.save();
+              Navigator.pop(dialogContext);
+            }
+          },
+          child: const Text('Add'),
+        ),
+      ],
+    ),
+  );
+}
 }
